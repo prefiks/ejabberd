@@ -52,8 +52,8 @@ script:
   - ./autogen.sh
   - ./configure --prefix=/tmp/ejabberd --enable-all --disable-odbc --disable-elixir
   - make
-  - make install
-  - make xref
+  #- make install
+  #- make xref
   - sed -i -e 's/ct:pal/ct:log/' test/suite.erl
   - ln -sf ../sql priv/
   - escript ./rebar skip_deps=true ct -v

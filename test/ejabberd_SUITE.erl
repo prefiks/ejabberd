@@ -2205,6 +2205,7 @@ create_sql_tables(Type, BaseDir) ->
     SQLFile = filename:join([BaseDir, "sql", File]),
     CreationQueries = read_sql_queries(SQLFile),
     DropTableQueries = drop_table_queries(CreationQueries),
+    ct:pal("c_s_t ~p", [[SQLFile, CreationQueries, DropTableQueries]]),
     case ejabberd_odbc:sql_transaction(
            VHost, DropTableQueries ++ CreationQueries) of
         {atomic, ok} ->
