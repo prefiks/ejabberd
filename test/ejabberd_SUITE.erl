@@ -30,26 +30,27 @@ suite() ->
 init_per_suite(Config) ->
     NewConfig = init_config(Config),
     DataDir = proplists:get_value(data_dir, NewConfig),
+    BaseDir = proplists:get_value(base_dir, NewConfig),
     {ok, CWD} = file:get_cwd(),
     ExtAuthScript = filename:join([DataDir, "extauth.py"]),
     LDIFFile = filename:join([DataDir, "ejabberd.ldif"]),
     {ok, _} = file:copy(ExtAuthScript, filename:join([CWD, "extauth.py"])),
     {ok, _} = ldap_srv:start(LDIFFile),
     ok = application:start(ejabberd),
-    case catch ejabberd_odbc:sql_query(?MYSQL_VHOST, [<<"select 1;">>]) of
+    case catch ejabberd_odbc:sql_query(?PGSQL_VHOST, [<<"select 1;">>]) of
         {selected, _, _} ->
-            mod_muc:shutdown_rooms(?MYSQL_VHOST),
-            create_sql_tables(mysql, ?config(base_dir, Config)),
-        Err ->
-            {skip, {mysql_not_available, Err}}
+            create_sql_tables(mysql, BaseDir);
+        _ ->
+            ok
     end,
     case catch ejabberd_odbc:sql_query(?MYSQL_VHOST, [<<"select 1;">>]) of
         {selected, _, _} ->
-            mod_muc:shutdown_rooms(?MYSQL_VHOST),
-            create_sql_tables(mysql, ?config(base_dir, Config)),
-        Err ->
-            {skip, {mysql_not_available, Err}}
+            create_sql_tables(mysql, BaseDir);
+        _ ->
+            ok
     end,
+    application:stop(ejabberd),
+    ok = application:start(ejabberd),
     NewConfig.
 
 end_per_suite(_Config) ->
