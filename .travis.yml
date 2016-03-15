@@ -54,7 +54,9 @@ script:
   - make
   - make install
   - make xref
-  - make test
+  - sed -i -e 's/ct:pal/ct:log/' test/suite.erl
+  - cd priv && ln -sf ../sql
+  - rebar skip_deps=true ct verbose=1
   - grep -q 'TEST COMPLETE, \([[:digit:]]*\) ok, .* of \1 ' logs/raw.log
 
 after_script:
