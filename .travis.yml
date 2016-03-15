@@ -56,7 +56,7 @@ script:
   - make xref
   - sed -i -e 's/ct:pal/ct:log/' test/suite.erl
   - cd priv && ln -sf ../sql
-  - rebar skip_deps=true ct verbose=1
+  - $(REBAR) skip_deps=true ct -v
   - grep -q 'TEST COMPLETE, \([[:digit:]]*\) ok, .* of \1 ' logs/raw.log
 
 after_script:
