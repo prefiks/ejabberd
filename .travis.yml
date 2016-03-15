@@ -1,6 +1,4 @@
 language: erlang
-sudo: required
-dist: trusty
 
 otp_release:
   - 17.1
@@ -10,11 +8,6 @@ otp_release:
 services:
   - riak
   - redis-server
-  - mariadb
-  - postgresql
-
-addons:
-  mariadb: '10.1'
 
 before_install:
   #
@@ -24,13 +17,11 @@ before_install:
   #
   # See: https://github.com/travis-ci/travis-ci/issues/1986
   #
-  # - sudo sed -i -e s/table_cache/table_open_cache/ -e /log_slow_queries/d /etc/mysql/my.cnf
-  #- sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5
-  #- sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ precise mysql-5.6'
-  #- sudo apt-get -qq update
-  #- sudo apt-get -qq -o Dpkg::Options::=--force-confold install mysql-server-5.6
-  - curl -s https://packagecloud.io/install/repositories/basho/riak/script.deb.sh | sudo bash
-  - sudo apt-get install riak=2.1.1-1
+  - sudo sed -i -e s/table_cache/table_open_cache/ -e /log_slow_queries/d /etc/mysql/my.cnf
+  - sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5
+  - sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ precise mysql-5.6'
+  - sudo apt-get -qq update
+  - sudo apt-get -qq -o Dpkg::Options::=--force-confold install mysql-server-5.6
 
 install:
   - sudo apt-get -qq install libexpat1-dev libyaml-dev libpam0g-dev libsqlite3-dev
@@ -38,7 +29,6 @@ install:
 before_script:
   - mkdir "$PWD/ebin"
   - echo "[{riak_kv, [{add_paths, [\"$PWD/ebin/\"]}]}]." > advanced.config
-  - sudo ls /etc/riak
   - sudo mv advanced.config /etc/riak/advanced.config
   - sudo service riak restart
   - mysql -u root -e "CREATE USER 'ejabberd_test'@'localhost' IDENTIFIED BY 'ejabberd_test';"
