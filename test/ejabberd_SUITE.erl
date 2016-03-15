@@ -36,6 +36,20 @@ init_per_suite(Config) ->
     {ok, _} = file:copy(ExtAuthScript, filename:join([CWD, "extauth.py"])),
     {ok, _} = ldap_srv:start(LDIFFile),
     ok = application:start(ejabberd),
+    case catch ejabberd_odbc:sql_query(?MYSQL_VHOST, [<<"select 1;">>]) of
+        {selected, _, _} ->
+            mod_muc:shutdown_rooms(?MYSQL_VHOST),
+            create_sql_tables(mysql, ?config(base_dir, Config)),
+        Err ->
+            {skip, {mysql_not_available, Err}}
+    end,
+    case catch ejabberd_odbc:sql_query(?MYSQL_VHOST, [<<"select 1;">>]) of
+        {selected, _, _} ->
+            mod_muc:shutdown_rooms(?MYSQL_VHOST),
+            create_sql_tables(mysql, ?config(base_dir, Config)),
+        Err ->
+            {skip, {mysql_not_available, Err}}
+    end,
     NewConfig.
 
 end_per_suite(_Config) ->
@@ -53,8 +67,6 @@ init_per_group(redis, Config) ->
 init_per_group(mysql, Config) ->
     case catch ejabberd_odbc:sql_query(?MYSQL_VHOST, [<<"select 1;">>]) of
         {selected, _, _} ->
-            mod_muc:shutdown_rooms(?MYSQL_VHOST),
-            create_sql_tables(mysql, ?config(base_dir, Config)),
             set_opt(server, ?MYSQL_VHOST, Config);
         Err ->
             {skip, {mysql_not_available, Err}}
@@ -62,8 +74,6 @@ init_per_group(mysql, Config) ->
 init_per_group(pgsql, Config) ->
     case catch ejabberd_odbc:sql_query(?PGSQL_VHOST, [<<"select 1;">>]) of
         {selected, _, _} ->
-            mod_muc:shutdown_rooms(?PGSQL_VHOST),
-            create_sql_tables(pgsql, ?config(base_dir, Config)),
             set_opt(server, ?PGSQL_VHOST, Config);
         Err ->
             {skip, {pgsql_not_available, Err}}
