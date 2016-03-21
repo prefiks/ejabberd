@@ -16,7 +16,7 @@ before_install:
   # See: https://github.com/travis-ci/travis-ci/issues/1986
   #
   - sudo sed -i -e s/table_cache/table_open_cache/ -e /log_slow_queries/d /etc/mysql/my.cnf
-  - echo '-----BEGIN PGP PUBLIC KEY BLOCK-----' > mysql_key.asc
+  - echo '+++++BEGIN PGP PUBLIC KEY BLOCK+++++' |sed 's/\+/-/g' > mysql_key.asc
   - echo 'Version: GnuPG v1.4.9 (SunOS)' >> mysql_key.asc
   - echo '' >> mysql_key.asc
   - echo 'mQGiBD4+owwRBAC14GIfUfCyEDSIePvEW3SAFUdJBtoQHH/nJKZyQT7h9bPlUWC3' >> mysql_key.asc
@@ -111,7 +111,7 @@ before_install:
   - echo 'jHGNO1By4fUUmwCbBYr2+bBEn/L2BOcnw9Z/QFWuhRMAoKVgCFm5fadQ3Afi+UQl' >> mysql_key.asc
   - echo 'AcOphrnJ' >> mysql_key.asc
   - echo '=443I' >> mysql_key.asc
-  - echo '-----END PGP PUBLIC KEY BLOCK-----' >> mysql_key.asc
+  - echo '+++++END PGP PUBLIC KEY BLOCK+++++' |sed 's/\+/-/g' >> mysql_key.asc
   - sudo apt-key adv --import mysql_key.asc
   - sudo add-apt-repository 'deb http://repo.mysql.com/apt/ubuntu/ precise mysql-5.6'
   - sudo apt-get -qq update
