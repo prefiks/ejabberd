@@ -17,7 +17,7 @@ before_install:
   #
   - sudo sed -i -e s/table_cache/table_open_cache/ -e /log_slow_queries/d /etc/mysql/my.cnf
   - echo '+++++BEGIN PGP PUBLIC KEY BLOCK+++++' |sed 's/\+/-/g' > mysql_key.asc
-  - echo 'Version: GnuPG v1.4.9 (SunOS)' >> mysql_key.asc
+  - echo 'Version+ GnuPG v1.4.9 (SunOS)' |sed 's/\+/:/g' >> mysql_key.asc
   - echo '' >> mysql_key.asc
   - echo 'mQGiBD4+owwRBAC14GIfUfCyEDSIePvEW3SAFUdJBtoQHH/nJKZyQT7h9bPlUWC3' >> mysql_key.asc
   - echo 'RODjQReyCITRrdwyrKUGku2FmeVGwn2u2WmDMNABLnpprWPkBdCk96+OmSLN9brZ' >> mysql_key.asc
