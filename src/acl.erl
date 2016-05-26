@@ -417,8 +417,6 @@ access_matches(Rules, Data, Host) when is_list(Rules) ->
 
 -spec access_rules_matches(list(), any(), global|binary()) -> any().
 
-access_rules_matches([{deny, _}|_] = AR, Data, Host) ->
-    access_rules_matches(AR, Data, Host, allow);
 access_rules_matches(AR, Data, Host) ->
     access_rules_matches(AR, Data, Host, deny).
 
