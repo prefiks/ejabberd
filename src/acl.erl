@@ -351,6 +351,8 @@ acl_rule_matches({acl, Name}, Data, Host) ->
     ACLs = get_aclspecs(Name, Host),
     RawACLs = lists:map(fun(#acl{aclspec = R}) -> R end, ACLs),
     all_acl_rules_matches(RawACLs, Data, Host);
+acl_rule_matches({ip, {Net, Mask}}, #{ip := {IP, _Port}}, _Host) ->
+    is_ip_match(IP, Net, Mask);
 acl_rule_matches({ip, {Net, Mask}}, #{ip := IP}, _Host) ->
     is_ip_match(IP, Net, Mask);
 acl_rule_matches({user, {U, S}}, #{usr := {U, S, _}}, _Host) ->
