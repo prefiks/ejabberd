@@ -328,14 +328,19 @@ acl_rule_verify(_Spec) ->
     false.
 
 
-all_acl_rules_matches([Rule | Tail], Data, Host) ->
+all_acl_rules_matches([], _Data, _Host) ->
+    false;
+all_acl_rules_matches(Rules, Data, Host) ->
+    all_acl_rules_matches2(Rules, Data, Host).
+
+all_acl_rules_matches2([Rule | Tail], Data, Host) ->
     case acl_rule_matches(Rule, Data, Host) of
 	true ->
-	    all_acl_rules_matches(Tail, Data, Host);
+	    all_acl_rules_matches2(Tail, Data, Host);
 	false ->
 	    false
     end;
-all_acl_rules_matches([], _Data, _Host) ->
+all_acl_rules_matches2([], _Data, _Host) ->
     true.
 
 -spec acl_rule_matches(aclspec(), any(), global|binary()) -> boolean().
@@ -345,12 +350,7 @@ acl_rule_matches(all, _Data, _Host) ->
 acl_rule_matches({acl, Name}, Data, Host) ->
     ACLs = get_aclspecs(Name, Host),
     RawACLs = lists:map(fun(#acl{aclspec = R}) -> R end, ACLs),
-    case RawACLs of
-	[] ->
-	    false;
-	_ ->
-	    all_acl_rules_matches(RawACLs, Data, Host)
-    end;
+    all_acl_rules_matches(RawACLs, Data, Host);
 acl_rule_matches({ip, {Net, Mask}}, #{ip := IP}, _Host) ->
     is_ip_match(IP, Net, Mask);
 acl_rule_matches({user, {U, S}}, #{usr := {U, S, _}}, _Host) ->
@@ -390,7 +390,7 @@ acl_rule_matches({node_glob, {UR, SR}}, #{usr := {U, S, _}}, _Host) ->
 acl_rule_matches(_ACL, _Data, _Host) ->
     false.
 
--spec access_matches(atom()|list(), any(), globa|binary()) -> any().
+-spec access_matches(atom()|list(), any(), global|binary()) -> any().
 access_matches(all, _Data, _Host) ->
     allow;
 access_matches(none, _Data, _Host) ->
