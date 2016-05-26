@@ -347,6 +347,8 @@ all_acl_rules_matches2([], _Data, _Host) ->
 
 acl_rule_matches(all, _Data, _Host) ->
     true;
+acl_rule_matches({acl, all}, _Data, _Host) ->
+    true;
 acl_rule_matches({acl, Name}, Data, Host) ->
     ACLs = get_aclspecs(Name, Host),
     RawACLs = lists:map(fun(#acl{aclspec = R}) -> R end, ACLs),
